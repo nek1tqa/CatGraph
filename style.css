@@ -1,0 +1,95 @@
+*{
+	margin: 0;
+	padding: 0;
+	font-family: 'Open Sans';
+	font-weight: 400;
+	font-size: 16px;
+}
+
+*, ::before, ::after{
+	box-sizing: border-box;
+}
+
+ul, li{
+	padding: 0;
+	margin: 0;
+}
+
+li{
+	list-style: none;
+}
+
+a{
+	text-decoration: none;
+}
+
+body{
+	/*background-image: url("img/bg.png");*/
+	/*background-position-x: center;*/
+	overflow: hidden;
+	/*background-size: cover;*/
+}
+
+#canvas{
+	border: 1px solid black;
+	background-image: url("cats1.png");
+	
+}
+
+.container{
+	display: flex;
+}
+
+.menu{
+	flex: 1 1;
+	display: flex;
+	flex-direction: column;
+
+}
+
+.buttons{
+	display: flex;
+	flex-direction: column;
+	flex: 0 0;
+}
+
+.row{
+	display: flex;
+	justify-content: stretch;
+}
+
+.btn{
+	flex: 1 1;
+	font-size: 24px;
+	border-radius: 0px;
+	border: 1px solid blue;
+	text-align: center;
+	padding: 10px 0px;
+}
+
+.btnSmall{
+	font-size: 20px;
+}
+
+.inputs{
+	display: flex;
+	flex-direction: column;
+}
+
+.inp{
+	align-self: stretch;
+	font-size: 18px;
+	padding: 5px;
+}
+
+.cat{
+	flex: 1 1;
+	background-image: url("cat.png");
+	background-repeat: no-repeat;
+	background-size: contain;
+	background-position-x: center;
+}
+
+.solve{
+	flex: 0 0 100px;
+}
