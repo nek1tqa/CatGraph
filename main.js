@@ -2,19 +2,51 @@
 
 function initMathFunc(){
 
+	Math.fact = function(number){
+
+		for(let i = number-1; i >= 1; i--)
+			number *= i;
+		return number;
+
+	}
+
 	Math.logb = function(number, base){
 
 		return Math.log(number)/Math.log(base);
 
 	}
 
-	Math.ctan = function(x){
+	Math.tg = function(x){
+
+		return Math.tan(x);
+
+	}
+
+	Math.ctg = function(x){
 
 		return 1/Math.tan(x);
 
 	}
 
-	Math.actan = function(x){
+	Math.arcsin = function(x){
+
+		return Math.asin(x);
+
+	}
+
+	Math.arccos = function(x){
+
+		return Math.acos(x);
+
+	}
+
+	Math.arctg = function(x){
+
+		return Math.atan(x);
+
+	}
+
+	Math.arcctg = function(x){
 
 		return Math.PI/2 - Math.atan(x);
 
@@ -46,381 +78,812 @@ function initMathFunc(){
 
 }
 
+function log(str){
 
-function initCtx(canvsId, w, h){
-
-	let canvas = document.getElementById(canvsId);
-	canvas.width = w;
-	canvas.height = h;
-
-	return canvas.getContext('2d');
+	console.log(str);
 
 }
 
-function buttonFunc(str){
+function drawGrid(ctx, canvasW, canvasH, scale, kScale, oneRectSize, offsetX, offsetY){
 
-	document.getElementById("stringInput").value += str;
+// i = [-offsetX*oneRectSize - canvasW/2, 0.5*canvasW - offsetX*oneRectSize]/oneRectSize
 
-}
-
-function strPosReplace(str0, x0, x1, str1){
-
-	return str0.substring(0, x0) + str1 + str0.substring(x1+1, str0.length);
-
-}
-
-function getValueById(id){
-
-	return document.getElementById(id).value;
-
-}
-
-function prepareString(str){
-
-	let functions = [['abs', 'abs'], ['pow', 'pow'], ['sqrt', 'sqrt'], ['cbrt', 'cbrt'], ['sqrtN', 'sqrtN'], 
-				 ['sin', 'sin'], ['cos', 'cos'], ['tg', 'tan'], ['ctg', 'ctan'],
-				 ['arcsin', 'asin'], ['arccos', 'acos'], ['arctg', 'atan'], ['arcctg', 'actan'],
-	 ['log', 'logb'], ['ln', 'log'], ['lg', 'log10']];
-
-	let constants = [['exp', 'E'], ['pi', 'PI']]
+// offsetX-canvasW/2/oneRectSize; canvasW/2/oneRectSize-offsetX;
 
 
-	let string = str.toLowerCase();
-	string = string.replace(/ /gi, '');
-	for(let func of functions){
+// +offsetY-canvasH/2/oneRectSize; canvasH/2/oneRectSize+offsetY;
 
-		let idx = string.indexOf(func[0]);
-		while(idx != -1){
 
-			let regExp = new RegExp(`[a-z.]`);
-			if(!regExp.test(string.charAt(idx-1))){
-
-				string = strPosReplace(string, idx, idx+func[0].length-1,   'Math.' + func[1]);
-
-			}
-
-			idx = string.indexOf(func[0], idx+5+func[1].length);
-
-		}
-
-	}
-
-	for(let cons of constants){
-
-		let idx = string.indexOf(cons[0]);
-		while(idx != -1){
-
-			let regExp = new RegExp(`[a-z]`);
-			if(!regExp.test(string.charAt(idx-1))){
-
-				string = strPosReplace(string, idx, idx+cons[0].length-1,   'Math.' + cons[1]);
-
-			}
-
-			idx = string.indexOf(cons[0], idx+5+cons[1].length);
-
-		}
-
-	}
-
-	return string;
-
-}
-
-function solve(preparedString, x){
-
-	return eval(preparedString);
-
-}
-
-function ctxClear(){
-
-	ctx.save();
-	ctx.translate(0, -canvasH/2);
-	// ctx.fillStyle = "white";
-	ctx.clearRect(0, 0, canvasW, canvasH);
-	ctx.restore();
-
-}
-
-function gridDraw(xMin, xMax, atp){
-
-	let def = 20, k = -1, cd = 0, delt = 0, i;
-
-	while((def*Math.pow(2, k-1) > b-a) || (def*Math.pow(2, k) < b-a)){
-
-		// console.log(k);
-		if(b-a > def*Math.pow(2, k))
-			k++;
-		else if(b-a < def*Math.pow(2, k-1))
-			k--;
-
-	}
-
-	cd = Math.pow(2, k);
-	delt = Math.abs(a)%cd;
-	console.log(delt);
-	// if(a < 0)
-	// 	delt = Math.abs(a + delt);
-	// else
-	// 	delt = a - delt;
-
-	// if(k > 0)
-	// 	delt += 1;
-
-	console.log(k);
-	ctxClear();
-	ctx.save();
-	ctx.translate(0, -canvasH/2);
-	if((xMin < 0) && (xMax > 0)){
-
-		ctx.fillRect(-atp*xMin-1, 0, 3, canvasH);
-
-	}
-
-	for(i = delt; i < b-a; i += cd){
-
+	
+	ctx.lineWidth = 1;
+	ctx.strokeStyle = "black";
+	let q = Math.floor(canvasW/2/oneRectSize);
+	for(let i = Math.round(-offsetX-canvasW/2/oneRectSize); i <= Math.round(canvasW/2/oneRectSize-offsetX); i++){
 		console.log(i);
-		console.log(-atp*i);
-		console.log("");
-		ctx.fillRect(atp*i, 0, 1, canvasH);
+		ctx.beginPath();
+		ctx.moveTo((i+offsetX)*oneRectSize, canvasH/2+1);
+		ctx.lineTo((i+offsetX)*oneRectSize, -canvasH/2-1);
+		ctx.stroke();
+		ctx.closePath();
+
+		ctx.font = 20*Math.sqrt(scale)+"px serif";
+		ctx.fillStyle = "black";
+		ctx.fillText(i, (i+offsetX)*oneRectSize+2, -offsetY*oneRectSize-2);
 
 	}
 
-	ctx.restore();
-
-	for(i = -Math.floor(canvasH/2); i < Math.floor(canvasH/2); i += cd){
-
-		ctx.fillRect(0, atp*i, canvasW-1, 1);
-
-	}
-	ctx.fillRect(0, 0, canvasW-1, 3);
-
-}
-
-function drawGraphFast(){
+	ctx.lineWidth = 2;
+	ctx.beginPath();
+	ctx.moveTo(-canvasW/2-1, -offsetY*oneRectSize);
+	ctx.lineTo(canvasW/2+1, -offsetY*oneRectSize);
+	ctx.stroke();
+	ctx.closePath();
 
 	ctx.beginPath();
-	for(let i = 1; i <= def; i++){
+	ctx.moveTo(offsetX*oneRectSize, -canvasH/2-1);
+	ctx.lineTo(offsetX*oneRectSize, canvasH/2+1);
+	ctx.stroke();
+	ctx.closePath();
 
-		if(!isNaN(arrFunc[i][1])){
+	ctx.lineWidth = 1;
+	q = Math.floor(canvasH/2/oneRectSize);
+	for(let i = Math.round(-offsetY-canvasH/2/oneRectSize); i <= Math.round(canvasH/2/oneRectSize-offsetY); i++){
 
-			if(isNaN(arrFunc[i-1][1]) || Math.abs(arrFunc[i-1][1] - arrFunc[i][1]) > 1500){
-
-				ctx.moveTo((arrFunc[i][0]-a)*accToPx, -arrFunc[i][1]*accToPx);
-
-			}else{
-
-				lastEl = i;
-				ctx.lineTo((arrFunc[i][0]-a)*accToPx, -arrFunc[i][1]*accToPx);
-
-			}
-
-		}
-
+		ctx.beginPath();
+		ctx.moveTo(-canvasW/2-1, -(i+offsetY)*oneRectSize);
+		ctx.lineTo(canvasW/2+1, -(i+offsetY)*oneRectSize);
 		ctx.stroke();
+		ctx.closePath();
+		if(!i) continue;
+		ctx.font = 20*Math.sqrt(scale)+"px serif";
+		ctx.fillText(i, offsetX*oneRectSize+2, -(i+offsetY)*oneRectSize-2);
+
+		// ctx.beginPath();
+		// ctx.moveTo(-i*oneRectSize, canvasH/2+1);
+		// ctx.lineTo(-i*oneRectSize, -canvasH/2-1);
+		// ctx.stroke();
+		// ctx.closePath();
 
 	}
 
 }
 
-function createGraph(){
 
-	// const divisionVal = 1/10
-	// const N = 500;
-	let aId = 'aInp';
-	let bId = 'bInp';
-	let str = getValueById('stringInput');
-	str = prepareString(str);
-	a = parseFloat(getValueById(aId));
-	b = parseFloat(getValueById(bId));
 
-	let max = NaN;
-	let min = NaN;
-	let maxI = 0;
-	let minI = 0;
-	// const acc = Math.floor(def/Math.sqrtn(b-a, 4));
-	acc = def;
-	accToPx = canvasW/(b-a);
-	lastEl = 0;
 
-	gridDraw(a, b, accToPx);
-	// ctx.fillRect(0, 0, canvasW/acc, 100);
-	// console.log(acc);
-	// console.log(accToPx);
+// function drawGrid(ctx, canvasW, canvasH, scale, kScale, oneRectSize, offsetX, offsetY){
 
-	if((a != NaN) && (b != NaN)){
+// 	ctx.lineWidth = 1;
+// 	ctx.strokeStyle = "black";
+// 	let q = Math.floor(canvasW/2/oneRectSize);
+// 	for(let i = -q; i <= q; i++){
 
-		dx = (b-a)/def;
-		arrFunc = [];
-		let x = a;
-		
+// 		ctx.beginPath();
+// 		ctx.moveTo((i+offsetX)*oneRectSize, canvasH/2+1);
+// 		ctx.lineTo((i+offsetX)*oneRectSize, -canvasH/2-1);
+// 		ctx.stroke();
+// 		ctx.closePath();
 
-		arrFunc.push([x, (solve(str, x+dx) - solve(str, x))/dx]);
-		x += dx;
+// 		ctx.font = "20px serif";
+// 		ctx.fillText(i, (i+offsetX)*oneRectSize+2, -offsetY*oneRectSize-2);
 
-		ctx.beginPath();
-		ctx.moveTo((arrFunc[0][0]-a)*accToPx, -arrFunc[0][1]*accToPx);
+// 	}
 
-		for(let i = 1; i <= def; i++){
+// 	ctx.lineWidth = 2;
+// 	ctx.beginPath();
+// 	ctx.moveTo(-canvasW/2-1, -offsetY*oneRectSize);
+// 	ctx.lineTo(canvasW/2+1, -offsetY*oneRectSize);
+// 	ctx.stroke();
+// 	ctx.closePath();
 
-			arrFunc.push([x, (solve(str, x+dx) - solve(str, x))/dx]);
+// 	ctx.beginPath();
+// 	ctx.moveTo(offsetX*oneRectSize, -canvasH/2-1);
+// 	ctx.lineTo(offsetX*oneRectSize, canvasH/2+1);
+// 	ctx.stroke();
+// 	ctx.closePath();
 
-			if(isNaN(max) && !isNaN(arrFunc[i][1])){
+// 	ctx.lineWidth = 1;
+// 	q = Math.floor(canvasH/2/oneRectSize);
+// 	for(let i = -q; i <= q; i++){
 
-				max = arrFunc[i][1];
-				maxI = i;
+// 		ctx.beginPath();
+// 		ctx.moveTo(-canvasW/2-1, -(i-offsetY)*oneRectSize);
+// 		ctx.lineTo(canvasW/2+1, -(i-offsetY)*oneRectSize);
+// 		ctx.stroke();
+// 		ctx.closePath();
+// 		if(!i) continue;
+// 		ctx.font = "20px serif";
+// 		ctx.fillText(i, offsetX*oneRectSize+2, -(i-offsetY)*oneRectSize-2);
+
+// 		// ctx.beginPath();
+// 		// ctx.moveTo(-i*oneRectSize, canvasH/2+1);
+// 		// ctx.lineTo(-i*oneRectSize, -canvasH/2-1);
+// 		// ctx.stroke();
+// 		// ctx.closePath();
+
+// 	}
+
+// }
+
+
+
+// 5 x * 25 2 ^ + 14 5 ^ / sqrt x 2 ^ *
+
+function convert(str){
+
+	let re = / /gi;
+	str = str.replace(re, '');
+
+	let functions = ["abs", "sqrt", "sqrtn", "ln", "log", "sin", "cos", "tg", "ctg", "arccos", "arcsin", "arctg", "arcctg"];
+	let division0 = ["!"];
+	let division1 = ["^"];
+	let division2 = ["*", "/"];
+	let division3 = ["+", "-"];
+	console.log(division3.includes("+"));
+
+
+	let tmp = [];
+	let tmpType = [];
+	let newArr = [];
+	let newArrType = [];
+	let arr = [];
+	let arrType = [];
+
+	let isWord = -1;
+	let isNumber = -1;
+	let i;
+	for(i = 0; i < str.length; i++){
+
+		if(str[i] == "x" || str[i] == "+" || str[i] == "-" || str[i] == "*" || str[i] == "/" ||
+		   str[i] == "^" || str[i] == "!" || str[i] == "(" || str[i] == ")" || str[i] == ","){
+
+			if(isWord != -1){
+
+				arr.push(str.substr(isWord, i-isWord));
+				arrType.push("func");
+				isWord = -1;
+
+			}else if(isNumber != -1){
+
+				arr.push(parseFloat(str.substr(isNumber, i-isNumber)));
+				arrType.push("numb");
+				isNumber = -1;
 
 			}
-			if(isNaN(min) && !isNaN(arrFunc[i][1])){
+			arr.push(str.substr(i, 1));
 
-				min = arrFunc[i][1];
-				minI = i;
+			if(str[i] == "x")
+				arrType.push("variable");
+			else
+				arrType.push("operator");
 
-			}
+		}else if(str[i] >= "0" && str[i] <= "9" || str[i] == "."){
 
+			if(isNumber == -1)
+				isNumber = i;
 
-			if(arrFunc[i][1] > max){
+		}else{
 
-				max = arrFunc[i][1];
-				maxI = i;
-
-			}
-			if(arrFunc[i][1] < min){
-
-				min = arrFunc[i][1];
-				minI = i;
-
-			}
-
-			x += dx;
-			// console.log(arrFunc[i][0]-a);
-			// console.log((arrFunc[i][0]-a)*accToPx);
-			// console.log('');
+			if(isWord == -1)
+				isWord = i;		
 
 		}
 
+	}
 
-		for(let i = 1; i <= acc; i++){
+	if(isWord != -1){
 
-			setTimeout(() => {
+		arr.push(str.substr(isWord, i-isWord));
+		arrType.push("func");
+		isWord = -1;
 
-				if(!isNaN(arrFunc[i][1])){
+	}else if(isNumber != -1){
 
-					if(isNaN(arrFunc[i-1][1]) || Math.abs(arrFunc[i-1][1] - arrFunc[i][1]) > 1500){
+		arr.push(parseFloat(str.substr(isNumber, i-isNumber)));
+		arrType.push("numb");
+		isNumber = -1;
 
-						ctx.moveTo((arrFunc[i][0]-a)*accToPx, -arrFunc[i][1]*accToPx);
+	}	
 
-					}else{
+	console.log(arr);
 
-						lastEl = i;
-						ctx.lineTo((arrFunc[i][0]-a)*accToPx, -arrFunc[i][1]*accToPx);
+	for(let i = 0; i < arrType.length; i++){
+
+		console.log(arr[i]);
+		console.log(newArr);
+		console.log(tmp);
+		console.log("======");
+
+		if(arrType[i] != "numb" && arrType[i] != "variable"){
+
+			// if(tmp.length)
+			// 	if(tmpType[tmp.length-1] == "+" || tmpType[tmp.length-1] == "-"){
+
+			// 		while(tmpType[tmp.length-1])
+
+			// 	}
+			// tmp.push(arr[i]);
+			// tmpType.push(arrType[i]);
+			if(division0.includes(arr[i])){
+
+				newArr.push(arr[i]);
+				newArrType.push(arrType[i]);
+
+			}else if(arrType[i] == "func" || arr[i] == "("){
+
+				tmp.push(arr[i]);
+				tmpType.push(arrType[i]);
+
+			}else if(arr[i] == ")" || arr[i] == ","){
+
+				while(tmp[tmp.length-1] != "("){
+					log("q1");
+					newArr.push(tmp[tmp.length-1]);
+					newArrType.push(tmpType[tmp.length-1]);
+
+					tmp.pop();
+					tmpType.pop();
+
+				}
+
+				if(arr[i] == ")"){
+
+					tmp.pop();
+					tmpType.pop();
+					if(functions.includes(tmp[tmp.length-1])){
+
+						newArr.push(tmp[tmp.length-1]);
+						newArrType.push(tmpType[tmp.length-1]);
+						tmp.pop();
+						tmpType.pop();
 
 					}
 
 				}
 
-				ctx.stroke();
+			}else if(division1.includes(arr[i])){
 
-			}, i*2000/acc)
+				while(division1.includes(tmp[tmp.length-1]) || functions.includes(tmp[tmp.length-1])){
+
+					newArr.push(tmp[tmp.length-1]);
+					newArrType.push(tmpType[tmp.length-1]);
+					tmp.pop();
+					tmpType.pop();
+
+				}
+				tmp.push(arr[i]);
+				tmpType.push(arrType[i]);
+
+			}else if(division2.includes(arr[i])){
+
+				while(division2.includes(tmp[tmp.length-1]) || division1.includes(tmp[tmp.length-1])){
+
+					log("q2");
+					newArr.push(tmp[tmp.length-1]);
+					newArrType.push(tmpType[tmp.length-1]);
+					tmp.pop();
+					tmpType.pop();
+
+				}
+				tmp.push(arr[i]);
+				tmpType.push(arrType[i]);
+
+			}else if(division3.includes(arr[i])){
+
+				while(division3.includes(tmp[tmp.length-1]) || division2.includes(tmp[tmp.length-1]) || division1.includes(tmp[tmp.length-1])){
+
+					log("q3");
+					newArr.push(tmp[tmp.length-1]);
+					newArrType.push(tmpType[tmp.length-1]);
+					tmp.pop();
+					tmpType.pop();
+
+				}
+				tmp.push(arr[i]);
+				tmpType.push(arrType[i]);
+
+			}
+
+		}else{
+
+			newArr.push(arr[i]);
+			newArrType.push(arrType[i]);
 
 		}
 
 
-
-		// ctx.closePath();
-		// ctx.stroke();
-
-		console.log(arrFunc);
-
-
-	}else{
-
- 		if(a == NaN){
-
- 			alert('ENTER A');
-
-		}
-
-		if(b == NaN){
-
- 			alert('ENTER B');
-		
-		}
 
 	}
-			console.log(max);
-			console.log(min);
+
+	while(tmp.length){
+
+		newArr.push(tmp[tmp.length-1]);
+		newArrType.push(tmpType[tmp.length-1]);
+		tmp.pop();
+		tmpType.pop();
+
+	}
+
+	return newArr;
 
 }
 
-let canvasW = document.documentElement.clientWidth*2/3;
-let canvasH = document.documentElement.clientHeight;
+function solveFromBPN(arr, x){
 
-let ctx = initCtx('canvas', canvasW, canvasH);
-ctx.font = "22px serif";
-ctx.translate(0, canvasH/2);
-initMathFunc();
+	let stack = [];
+	for(let e of arr){
 
-let arrFunc = [];
-let accToPx = 0;
-let acc = 0;
-let dx = 0;
-let lastEl = 0;
-let a = 0;
-let b = 0;
-const def = 1000;
-let fl = false;
-// let str = document.getElementById("")
-// let x = '4';
+		if(!isNaN(parseFloat(e))){
 
-// let prStr = prepareString(str);
+			stack.push(e);
 
+		}else if(e == "x"){
 
+			stack.push(x);
 
-document.getElementById('canvas').onmousemove = function(){
+		}else{
 
-	if(arrFunc != []){
+			if(e == "+"){
 
-		let targetCoords = document.getElementById('canvas').getBoundingClientRect();
-		let x = event.clientX - targetCoords.left;
-		let y = -(event.clientY - targetCoords.top - canvasH/2);
-		let n = Math.round(x/(accToPx*dx));
+				let n2 = stack[stack.length-1];
+				stack.pop();
+				let n1 = stack[stack.length-1];
+				stack.pop();
+				stack.push(n1 + n2);
 
-		if(n >= 0 && n <= def){
+			}else if(e == "-"){
 
-			// console.log(Math.abs(arrFunc[n][1]*accToPx - y));
-			if(Math.abs(arrFunc[n][1]*accToPx - y) <= 15){
+				let n2 = stack[stack.length-1];
+				stack.pop();
+				let n1 = stack[stack.length-1];
+				stack.pop();
+				stack.push(n1 - n2);
 
-				// alert(arrFunc[n][0] + '; ' + arrFunc[n][1]);
+			}else if(e == "*"){
 
-				fl = true;
-				gridDraw(a, b, accToPx);
-				drawGraphFast();
-				ctx.fillStyle = "red";
-				ctx.beginPath();
-				ctx.arc((arrFunc[n][0]-a)*accToPx, -arrFunc[n][1]*accToPx, 5, 0, Math.PI*2, true);
-				ctx.fill();
-				ctx.fillText(Math.round(arrFunc[n][0]*1000)/1000 + '; ' + Math.round(arrFunc[n][1]*1000)/1000, x+5, -y-10);
-				ctx.fillStyle = "black";
+				let n2 = stack[stack.length-1];
+				stack.pop();
+				let n1 = stack[stack.length-1];
+				stack.pop();
+				stack.push(n1*n2);
 
-			}else{
+			}else if(e == "/"){
 
-				if(fl == true){
+				let n2 = stack[stack.length-1];
+				stack.pop();
+				let n1 = stack[stack.length-1];
+				stack.pop();
+				stack.push(n1/n2);
 
-					fl = false;
-					gridDraw(a, b, accToPx);
-					drawGraphFast();
+			}else if(e == "!"){
 
-				}
+				let n1 = stack[stack.length-1];
+				stack.pop();
+				stack.push(Math.fact(n1));
+
+			}else if(e == "^"){
+
+				let n2 = stack[stack.length-1];
+				stack.pop();
+				let n1 = stack[stack.length-1];
+				stack.pop();
+				stack.push(Math.pow(n1, n2));
+
+			}else if(e == "sqrt"){
+
+				let n1 = stack[stack.length-1];
+				stack.pop();
+				stack.push(Math.sqrt(n1));
+
+			}else if(e == "sqrtn"){
+
+				let n2 = stack[stack.length-1];
+				stack.pop();
+				let n1 = stack[stack.length-1];
+				stack.pop();
+				stack.push(Math.sqrtn(n1, n2));
+
+			}else if(e == "ln"){
+
+				let n1 = stack[stack.length-1];
+				stack.pop();
+				stack.push(Math.log(n1));
+
+			}else if(e == "log"){
+
+				let n2 = stack[stack.length-1];
+				stack.pop();
+				let n1 = stack[stack.length-1];
+				stack.pop();
+				stack.push(Math.logb(n1, n2));
+
+			}else if(e == "abs"){
+
+				let n1 = stack[stack.length-1];
+				stack.pop();
+				stack.push(Math.abs(n1));
+
+			}else if(e == "sin"){
+
+				let n1 = stack[stack.length-1];
+				stack.pop();
+				stack.push(Math.sin(n1));
+
+			}else if(e == "cos"){
+
+				let n1 = stack[stack.length-1];
+				stack.pop();
+				stack.push(Math.cos(n1));
+
+			}else if(e == "tg"){
+
+				let n1 = stack[stack.length-1];
+				stack.pop();
+				stack.push(Math.tg(n1));
+
+			}else if(e == "ctg"){
+
+				let n1 = stack[stack.length-1];
+				stack.pop();
+				stack.push(Math.ctg(n1));
+
+			}else if(e == "arcsin"){
+
+				let n1 = stack[stack.length-1];
+				stack.pop();
+				stack.push(Math.arcsin(n1));
+
+			}else if(e == "arccos"){
+
+				let n1 = stack[stack.length-1];
+				stack.pop();
+				stack.push(Math.arccos(n1));
+
+			}else if(e == "arctg"){
+
+				let n1 = stack[stack.length-1];
+				stack.pop();
+				stack.push(Math.arctg(n1));
+
+			}else if(e == "arcctg"){
+
+				let n1 = stack[stack.length-1];
+				stack.pop();
+				stack.push(Math.arcctg(n1));
 
 			}
 
 		}
-		// console.log(x);
-		// console.log(y);
-		// console.log('');
 
 	}
+	// console.log(stack);
+	return stack[0];
+
+}
+
+
+class Graph{
+
+	constructor(str, color, colorD){
+
+		this.graphFunc = convert(str);
+		this.color = color;
+		this.colorD = colorD;
+		let zn = NaN;
+
+	}
+
+	getData(iLeft, iRight, dx){
+
+		this.zn = [];
+		for(let i = iLeft; i <= iRight; i += dx)
+			this.zn.push([i, solveFromBPN(this.graphFunc, i)]);
+		return [this.zn, this.color];
+
+	}
+
+	getDiffData(dx){
+
+		let znD = [];
+		for(let i = 1; i < this.zn.length; i++)
+			znD.push([this.zn[i][0], (this.zn[i][1] - this.zn[i-1][1])/dx]);
+		return [znD, this.colorD];
+
+	}
+
+}
+
+function drawGraph(cnv, ctx, data, offsetX, offsetY, oneRectSize, dx){
+
+
+	ctx.lineWidth = 2;
+	ctx.strokeStyle = data[1];
+	let w = cnv.width/oneRectSize/2;
+	let fl = true;
+	ctx.beginPath();
+
+	let i = 0;
+	console.log(data);
+	while(isNaN(data[0][i][1]))
+		i++;
+	ctx.moveTo((data[0][i][0]+offsetX)*oneRectSize, -(data[0][i][1]+offsetY)*oneRectSize);
+	i++;
+	for(i; i < data[0].length; i++){
+
+		if(isNaN(data[0][i][1]) && fl){
+
+			ctx.stroke();
+			ctx.closePath();
+			fl = false;
+			continue;
+
+
+		}else if(!isNaN(data[0][i][1]) && !fl){
+
+			fl = true;
+			ctx.beginPath();
+			ctx.moveTo((data[0][i][0]+offsetX)*oneRectSize, -(data[0][i][1]+offsetY)*oneRectSize);
+
+		}else if(!isNaN(data[0][i][1]) && fl){
+
+			ctx.lineTo((data[0][i][0]+offsetX)*oneRectSize, -(data[0][i][1]+offsetY)*oneRectSize);
+
+		}
+
+
+
+	}
+	ctx.stroke();
+	ctx.closePath();
+
+}
+
+function clearCtx(cnv, ctx){
+
+	console.log(ctx);
+	ctx.fillStyle = "white";
+	ctx.fillRect(-1, -1, cnv.width+1, cnv.height+1);
+
+}
+
+function updateCtx(ctx, cnv, graphFuncArr, w, offsetX, offsetY, oneRectSize, dx){
+
+	clearCtx(cnv, ctx);
+	ctx.translate(cnv.width/2, cnv.height/2);
+	drawGrid(ctx, cnv.width, cnv.height, scale, kScale, oneRectSize, offsetX, offsetY);
+
+	for(let e of graphFuncArr){
+
+		drawGraph(cnv, ctx, e, offsetX, offsetY, oneRectSize, dx);
+
+	}
+
+	ctx.translate(-cnv.width/2, -cnv.height/2);
+
+}
+
+function update(ctx, cnv, func, w, offsetX, offsetY, oneRectSize, dx){
+
+	gfa = [];
+	gfa.push(func.getData(-w-offsetX, w-offsetX, dx));
+	gfa.push(func.getDiffData(dx));
+	updateCtx(ctx, cnv, gfa, w, offsetX, offsetY, oneRectSize, dx);
+
+}
+
+
+const idName = "cnv";
+let cnv = document.getElementById(idName);
+cnv.height = window.innerHeight;
+cnv.width = window.innerWidth;
+let ctx = cnv.getContext("2d");
+
+
+
+initMathFunc();
+
+let scale = 1;
+let kScale = 10/scale;
+
+let graphLineWidth = 40/kScale;
+let oneRectSize = cnv.height/kScale;
+let zn = [];
+let znD = [];
+let offsetX = 0;
+let offsetY = 0;
+let w = cnv.width/oneRectSize/2;
+let dx = 1/500/scale;
+let gfa = [];
+
+
+let graph1 = new Graph("x^2", "red", "blue");
+update(ctx, cnv, graph1, w, offsetX, offsetY, oneRectSize, dx);
+
+// ctx.strokeStyle = "red";
+// ctx.lineWidth = graphLineWidth;
+// for(let i = -w-offsetX; i <= w+offsetX; i += dx){
+
+// 	if(zn.length){
+
+// 		ctx.beginPath();
+// 		ctx.moveTo((zn[zn.length-1][0]+offsetX)*oneRectSize, -(zn[zn.length-1][1]+offsetY)*oneRectSize);
+
+// 	}
+// 	zn.push([i, solveFromBPN(ca, i)]);
+// 	if(isNaN(zn[zn.length-1][1]))
+// 		continue;
+
+// 	if(zn.length >= 2){
+
+// 		ctx.lineTo((zn[zn.length-1][0]+offsetX)*oneRectSize, -(zn[zn.length-1][1]+offsetY)*oneRectSize);
+// 		ctx.stroke();
+// 		ctx.closePath();
+// 		znD.push([zn[zn.length-1][0], (zn[zn.length-1][1] - zn[zn.length-2][1])/dx])
+
+// 	}
+
+// }
+
+// ctx.strokeStyle = "green";
+// for(let i = 1; i < znD.length; i++){
+
+// 	ctx.beginPath();
+// 	ctx.moveTo((znD[i-1][0]+offsetX)*oneRectSize, (-znD[i-1][1]-offsetY)*oneRectSize);
+
+// 	if(isNaN(znD[i-1][1]))
+// 		continue;
+
+// 	ctx.lineTo((znD[i][0]+offsetX)*oneRectSize, (-znD[i][1]-offsetY)*oneRectSize);
+// 	ctx.stroke();
+// 	ctx.closePath();
+
+
+// }
+// console.log(znD)
+// // сновные принципы оздоровительно-тренировочных занятий
+
+
+// let graph1 = new Graph("sin(x)", "red", "blue");
+
+
+
+
+
+
+let md = false;
+let lastMouseCoords = [0, 0];
+
+
+cnv.addEventListener("mousedown", function(event){
+
+	md = true;
+	lastMouseCoords[0] = event.clientX;
+	lastMouseCoords[1] = event.clientY;
+
+});
+
+
+cnv.addEventListener("mouseup", function(event){
+
+	md = false;
+	lastMouseCoords[0] = 0;
+	lastMouseCoords[1] = 0;
+
+});
+
+cnv.addEventListener("mousemove", function(event){
+
+	if(md){
+
+		offsetX += (event.clientX - lastMouseCoords[0])/oneRectSize;
+		offsetY -= (event.clientY - lastMouseCoords[1])/oneRectSize;
+		lastMouseCoords[0] = event.clientX;
+		lastMouseCoords[1] = event.clientY;
+		update(ctx, cnv, graph1, w, offsetX, offsetY, oneRectSize, dx);
+
+	}else{
+
+		// if()
+
+	}
+
+});
+
+cnv.addEventListener("mousewheel", function(event){
+
+	let kMax = 1.25;
+	let kMin = 1;
+
+	let dy = Math.abs(event.deltaY);
+
+	if(dy > 100)
+		dy = 100;
+	dy /= 100;
+	let k = kMin + dy*(kMax-kMin);
+
+	if(!md){
+
+		if(event.deltaY > 0)
+			k = 1/k;
+
+		scale *= k;
+		// offsetX *= k;
+		// offsetY *= k;
+
+
+		kScale = 10/scale;
+
+		oneRectSize = cnv.height/kScale;
+		w = cnv.width/oneRectSize/2;
+		dx = 1/200/scale;
+		update(ctx, cnv, graph1, w, offsetX, offsetY, oneRectSize, dx);
+
+
+	}
+
+});
+
+let menu = document.getElementById("bl");
+let menuD = false;
+let lmcm = [0, 0];
+let menuCoords = [100, 100];
+
+
+
+menu.style.right = menuCoords[0] + "px";
+menu.style.bottom = menuCoords[1] + "px";
+
+
+
+
+
+
+
+menu.addEventListener("mousedown", function(event){
+
+	if(document.elementFromPoint(event.clientX, event.clientY) == menu){
+
+		menuD = true;
+		lmcm[0] = event.clientX;
+		lmcm[1] = event.clientY;
+
+	}
+
+});
+
+
+menu.addEventListener("mouseup", function(event){
+
+	menuD = false;
+	lmcm[0] = 0;
+	lmcm[1] = 0;
+
+});
+
+document.addEventListener("mousemove", function(event){
+
+	if(menuD){
+
+		menuCoords[0] -= event.clientX - lmcm[0];
+		menuCoords[1] -= event.clientY - lmcm[1];
+		menu.style.right = menuCoords[0] + "px";
+		menu.style.bottom = menuCoords[1] + "px";
+
+		lmcm[0] = event.clientX;
+		lmcm[1] = event.clientY;
+
+	}else{
+
+		// if()
+
+	}
+
+});
+
+function setFunc(){
+
+	let str = document.getElementById("f").value;
+	graph1 = new Graph(str, "red", "blue");
+	update(ctx, cnv, graph1, w, offsetX, offsetY, oneRectSize, dx);
 
 }

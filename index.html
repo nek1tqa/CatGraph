@@ -9,62 +9,12 @@
 	</head>
 	<body>
 		<div class="container">
-			<div class="menu">
-				<div class="inputs">
-					<input type="text" class="inp" placeholder="Тут функция, умножение только через *" id="stringInput">
-					<input type="text" class="inp" placeholder="Левый край промежутка" id="aInp">
-					<input type="text" class="inp" placeholder="Правый край промежутка" id="bInp">
-				</div>
-				<div class="cat">
-					
-				</div>
-				<button class="btn solve" onclick="createGraph()">
-					solve
-				</button>
-				<div class="buttons">
-					<div class="row">
-						<button class="btn" onclick="buttonFunc('+')">+</button>
-						<button class="btn" onclick="buttonFunc('-')">-</button>
-						<button class="btn" onclick="buttonFunc('*')">*</button>
-						<button class="btn" onclick="buttonFunc('/')">/</button>
-						<button class="btn" onclick="buttonFunc('(')">(</button>
-						<button class="btn" onclick="buttonFunc(')')">)</button>
-						<button class="btn" onclick="buttonFunc('x')">x</button>
-					</div>
-					<div class="row">
-						<button class="btn btnSmall" onclick="buttonFunc('pow(x, 2)')">a<sup>2</sup></button>
-						<button class="btn btnSmall" onclick="buttonFunc('pow(')">a<sup>n</sup></button>
-						<button class="btn btnSmall" onclick="buttonFunc('sqrt(x)')">sqrt(x)</button>
-						<button class="btn btnSmall" onclick="buttonFunc('cbrt(x)')">cbrt(x)</button>
-						<button class="btn btnSmall" onclick="buttonFunc('sqrtn(')">sqrtN(x, n)</button>
-					</div>
-					<div class="row">
-						<button class="btn btnSmall" onclick="buttonFunc('sin(x)')">sin(x)</button>
-						<button class="btn btnSmall" onclick="buttonFunc('cos(x)')">cos(x)</button>
-						<button class="btn btnSmall" onclick="buttonFunc('tg(x)')">tg(x)</button>
-						<button class="btn btnSmall" onclick="buttonFunc('ctg(x)')">ctg(x)</button>
-					</div>
-					<div class="row">
-						<button class="btn btnSmall" onclick="buttonFunc('arcsin(x)')">arcsin(x)</button>
-						<button class="btn btnSmall" onclick="buttonFunc('arccos(x)')">arccos(x)</button>
-						<button class="btn btnSmall" onclick="buttonFunc('arctg(x)')">arctg(x)</button>
-						<button class="btn btnSmall" onclick="buttonFunc('arcctg(x)')">arcctg(x)</button>
-					</div>
-					<div class="row">
-						<button class="btn" onclick="buttonFunc('pi')">&pi;</button>
-						<button class="btn btnSmall" onclick="buttonFunc('log(')">log<sub>b</sub>(a)</button>
-						<button class="btn btnSmall" onclick="buttonFunc('ln(x)')">ln(x)</button>
-						<button class="btn btnSmall" onclick="buttonFunc('lg(x)')">lg(x)</button>
-						<button class="btn" onclick="buttonFunc('exp')">e</button>
-					</div>
-				</div>
+			<div id="bl">
+				<input type="text" id="f" value="x^2">
+				<button id="btn" onclick="setFunc()">apply</button>
 			</div>
-			<div class="cnvBlock">
-				<canvas id="canvas"></canvas>
-			</div>
+			<canvas id="cnv"></canvas>
 		</div>
 		<script type="text/javascript" src="main.js"></script>
 	</body>
 </html>
-
-pow(ln(pow(x, 2) + sin(x)), 3)
