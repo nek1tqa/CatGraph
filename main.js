@@ -99,12 +99,10 @@ function drawGrid(ctx, canvasW, canvasH, scale, kScale, oneRectSize, offsetX, of
 	ctx.strokeStyle = "black";
 	let q = Math.floor(canvasW/2/oneRectSize);
 	for(let i = Math.round(-offsetX-canvasW/2/oneRectSize); i <= Math.round(canvasW/2/oneRectSize-offsetX); i++){
-		console.log(i);
 		ctx.beginPath();
 		ctx.moveTo((i+offsetX)*oneRectSize, canvasH/2+1);
 		ctx.lineTo((i+offsetX)*oneRectSize, -canvasH/2-1);
 		ctx.stroke();
-		ctx.closePath();
 
 		ctx.font = 20*Math.sqrt(scale)+"px serif";
 		ctx.fillStyle = "black";
@@ -117,13 +115,11 @@ function drawGrid(ctx, canvasW, canvasH, scale, kScale, oneRectSize, offsetX, of
 	ctx.moveTo(-canvasW/2-1, -offsetY*oneRectSize);
 	ctx.lineTo(canvasW/2+1, -offsetY*oneRectSize);
 	ctx.stroke();
-	ctx.closePath();
 
 	ctx.beginPath();
 	ctx.moveTo(offsetX*oneRectSize, -canvasH/2-1);
 	ctx.lineTo(offsetX*oneRectSize, canvasH/2+1);
 	ctx.stroke();
-	ctx.closePath();
 
 	ctx.lineWidth = 1;
 	q = Math.floor(canvasH/2/oneRectSize);
@@ -133,7 +129,6 @@ function drawGrid(ctx, canvasW, canvasH, scale, kScale, oneRectSize, offsetX, of
 		ctx.moveTo(-canvasW/2-1, -(i+offsetY)*oneRectSize);
 		ctx.lineTo(canvasW/2+1, -(i+offsetY)*oneRectSize);
 		ctx.stroke();
-		ctx.closePath();
 		if(!i) continue;
 		ctx.font = 20*Math.sqrt(scale)+"px serif";
 		ctx.fillText(i, offsetX*oneRectSize+2, -(i+offsetY)*oneRectSize-2);
@@ -219,7 +214,6 @@ function convert(str){
 	let division1 = ["^"];
 	let division2 = ["*", "/"];
 	let division3 = ["+", "-"];
-	console.log(division3.includes("+"));
 
 
 	let tmp = [];
@@ -285,14 +279,9 @@ function convert(str){
 
 	}	
 
-	console.log(arr);
 
 	for(let i = 0; i < arrType.length; i++){
 
-		console.log(arr[i]);
-		console.log(newArr);
-		console.log(tmp);
-		console.log("======");
 
 		if(arrType[i] != "numb" && arrType[i] != "variable"){
 
@@ -576,7 +565,7 @@ class Graph{
 	getData(iLeft, iRight, dx){
 
 		this.zn = [];
-		for(let i = iLeft; i <= iRight; i += dx)
+		for(let i = iLeft-dx; i <= iRight+dx; i += dx)
 			this.zn.push([i, solveFromBPN(this.graphFunc, i)]);
 		return [this.zn, this.color];
 
@@ -596,14 +585,13 @@ class Graph{
 function drawGraph(cnv, ctx, data, offsetX, offsetY, oneRectSize, dx){
 
 
-	ctx.lineWidth = 2;
+	ctx.lineWidth = 2.5;
 	ctx.strokeStyle = data[1];
 	let w = cnv.width/oneRectSize/2;
 	let fl = true;
 	ctx.beginPath();
 
 	let i = 0;
-	console.log(data);
 	while(isNaN(data[0][i][1]))
 		i++;
 	ctx.moveTo((data[0][i][0]+offsetX)*oneRectSize, -(data[0][i][1]+offsetY)*oneRectSize);
@@ -612,8 +600,14 @@ function drawGraph(cnv, ctx, data, offsetX, offsetY, oneRectSize, dx){
 
 		if(isNaN(data[0][i][1]) && fl){
 
+			// let qw = (data[0][i-1][1] - data[0][i-2][1])/dx;
+			// console.log("========" + qw);
+			// if(qw > 0)
+			// 	ctx.lineTo((data[0][i][0]+offsetX)*oneRectSize, -cnv.height/2-1);
+			// else
+			// 	ctx.lineTo((data[0][i][0]+offsetX)*oneRectSize, +cnv.height/2+1);
+
 			ctx.stroke();
-			ctx.closePath();
 			fl = false;
 			continue;
 
@@ -634,13 +628,11 @@ function drawGraph(cnv, ctx, data, offsetX, offsetY, oneRectSize, dx){
 
 	}
 	ctx.stroke();
-	ctx.closePath();
 
 }
 
 function clearCtx(cnv, ctx){
 
-	console.log(ctx);
 	ctx.fillStyle = "white";
 	ctx.fillRect(-1, -1, cnv.width+1, cnv.height+1);
 
@@ -687,8 +679,6 @@ let kScale = 10/scale;
 
 let graphLineWidth = 40/kScale;
 let oneRectSize = cnv.height/kScale;
-let zn = [];
-let znD = [];
 let offsetX = 0;
 let offsetY = 0;
 let w = cnv.width/oneRectSize/2;
@@ -815,7 +805,7 @@ cnv.addEventListener("mousewheel", function(event){
 
 		oneRectSize = cnv.height/kScale;
 		w = cnv.width/oneRectSize/2;
-		dx = 1/200/scale;
+		dx = 1/500/scale;
 		update(ctx, cnv, graph1, w, offsetX, offsetY, oneRectSize, dx);
 
 
@@ -884,6 +874,7 @@ function setFunc(){
 
 	let str = document.getElementById("f").value;
 	graph1 = new Graph(str, "red", "blue");
+
 	update(ctx, cnv, graph1, w, offsetX, offsetY, oneRectSize, dx);
 
 }
